@@ -1,0 +1,15 @@
+<h2>Your Cart</h2>
+{% if items %}
+  <ul>
+    {% for item in items %}
+      <li>
+        {{ item.product.title }} - Qty: {{ item.quantity }} - Rs.{{ item.product.price }}
+        <a href="{% url 'remove_from_cart' item.id %}">Remove</a>
+        <a href="{% url 'place_order' %}">Place Order</a>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>Your cart is empty.</p>
+{% endif %}
+<a href="{% url 'product_list' %}">← Continue Shopping</a>
