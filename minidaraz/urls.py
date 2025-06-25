@@ -17,17 +17,22 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
-from products import views
+from products import views as product_views
+from products.views import product_list 
+from minidaraz import views  
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('products/', include('products.urls')), 
-    path('', views.product_list, name='product_list'),
+    path('', product_views.home_view, name='home'), 
     path('cart/', include('cart.urls')),
     path('orders/', include('orders.urls')),
     path('accounts/', include('accounts.urls')),
+    path('about/', views.about_view, name='about'),
+    path('contact/', views.contact_view, name='contact'),
 ]
+
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

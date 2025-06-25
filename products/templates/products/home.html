@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- ✅ Navbar Buttons -->
+<nav>
+  <form action="{% url 'home' %}" method="get" style="display:inline;">
+    <button type="submit">🏠 Home</button>
+  </form>
+
+  <form action="{% url 'product_list' %}" method="get" style="display:inline;">
+    <button type="submit">📦 Products</button>
+  </form>
+
+  <form action="{% url 'view_cart' %}" method="get" style="display:inline;">
+    <button type="submit">🛒 Cart</button>
+  </form>
+
+  {% if user.is_authenticated %}
+    <form action="{% url 'user_orders' %}" method="get" style="display:inline;">
+      <button type="submit">🧾 Orders</button>
+    </form>
+
+    <form action="{% url 'profile' %}" method="get" style="display:inline;">
+      <button type="submit">👤 Profile</button>
+    </form>
+
+    <form action="{% url 'logout' %}" method="post" style="display:inline;">
+      {% csrf_token %}
+      <button type="submit">🚪 Logout</button>
+    </form>
+  {% else %}
+    <form action="{% url 'login' %}" method="get" style="display:inline;">
+      <button type="submit">🔐 Login</button>
+    </form>
+  {% endif %}
+</nav>
+
+<hr>
+
+<!-- 🛍️ Product List -->
+<h2>All Products</h2>
+<ul>
+  {% for product in products %}
+    <li>
+      <img src="{{ product.image.url }}" alt="{{ product.name }}" width="200">
+      <form action="{% url 'product_detail' product.id %}" method="get" style="display:inline;">
+        <button type="submit">{{ product.title }} - Rs.{{ product.price }}</button>
+      </form>
+    </li>
+  {% empty %}
+    <li>No products available.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

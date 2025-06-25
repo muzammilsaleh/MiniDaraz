@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>My Orders</h2>
+
+  {% if orders %}
+    <ul>
+      {% for order in orders %}
+        <li>
+          <p><strong>Order #{{ order.id }}</strong> — Status: {{ order.status }} — Rs.{{ order.total_amount }}</p>
+          <p>Placed on: {{ order.created_at|date:"M d, Y H:i" }}</p>
+          <ul>
+            {% for item in order.items.all %}
+              <li>
+                <img src="{{ item.product.image.url }}" alt="{{ item.product.title }}" width="50" height="50">
+                {{ item.quantity }} x {{ item.product.title }} — Rs.{{ item.price }}
+              </li>
+            {% endfor %}
+          </ul>
+          <a href="{% url 'order_detail' order.id %}">View Details</a>
+          <hr>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>You haven't placed any orders yet.</p>
+  {% endif %}
+
+{% endblock %}

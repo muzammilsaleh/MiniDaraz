@@ -1,13 +1,62 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- ✅ Admin-only Add Product Button -->
+{% if user.is_authenticated and user.is_staff %}
+  <form action="{% url 'add_product' %}" method="get">
+    <button type="submit">➕ Add Product</button>
+  </form>
+{% endif %}
+
 <h2>All Products</h2>
+
+<!-- 🔍 Search Form -->
+<form method="get">
+  <input type="text" name="q" placeholder="Search by title" value="{{ request.GET.q }}">
+  <button type="submit">🔍 Search</button>
+</form>
+
+<!-- 💸 Price Filter -->
+<form method="get">
+  <input type="hidden" name="q" value="{{ request.GET.q }}">
+  <input type="number" name="min_price" placeholder="Min Price" value="{{ request.GET.min_price }}">
+  <input type="number" name="max_price" placeholder="Max Price" value="{{ request.GET.max_price }}">
+  <button type="submit">💰 Filter</button>
+</form>
+
+<!-- 🗂 Category Filter Buttons -->
+<h4>Filter by Category:</h4>
+<form method="get">
+  {% for cat in categories %}
+    <button type="submit" name="category" value="{{ cat.id }}">{{ cat.name }}</button>
+  {% endfor %}
+</form>
+
+<hr>
+
+<!-- 🛍️ Product List -->
 <ul>
   {% for product in products %}
     <li>
-      <a href="{% url 'product_detail' product.id %}">
-        {{ product.title }} - Rs.{{ product.price }}
-      </a>
-      <a href="{% url 'add_to_cart' product.id %}">🛒 Add to Cart</a>
-    </li>
+  <form action="{% url 'product_detail' product.id %}" method="get" style="display:inline;">
+    <button type="submit">{{ product.title }} - Rs.{{ product.price }}</button>
+  </form>
+
+  <!-- ✅ Admin-only Edit/Delete Buttons -->
+  {% if user.is_authenticated and user.is_staff %}
+    <form action="{% url 'edit_product' product.id %}" method="get" style="display:inline;">
+      <button type="submit">✏️ Edit</button>
+    </form>
+    <form action="{% url 'delete_product' product.id %}" method="get" style="display:inline;">
+      <button type="submit">🗑️ Delete</button>
+    </form>
+  {% endif %}
+</li>
+
   {% empty %}
-    <li>No products available</li>
+    <li>No products found.</li> 
   {% endfor %}
 </ul>
+
+{% endblock %}
