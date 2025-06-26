@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<!-- ✅ Admin-only Add Product Button -->
+<!--  Admin-only Add Product Button -->
 {% if user.is_authenticated and user.is_staff %}
   <form action="{% url 'add_product' %}" method="get">
     <button type="submit">➕ Add Product</button>
@@ -11,7 +11,7 @@
 
 <h2>All Products</h2>
 
-<!-- 🔍 Search Form -->
+<!-- Search Form -->
 <form method="get">
   <input type="text" name="q" placeholder="Search by title" value="{{ request.GET.q }}">
   <button type="submit">🔍 Search</button>
@@ -25,7 +25,7 @@
   <button type="submit">💰 Filter</button>
 </form>
 
-<!-- 🗂 Category Filter Buttons -->
+<!--  Category Filter Buttons -->
 <h4>Filter by Category:</h4>
 <form method="get">
   {% for cat in categories %}
@@ -35,7 +35,7 @@
 
 <hr>
 
-<!-- 🛍️ Product List -->
+<!--  Product List -->
 <ul>
   {% for product in products %}
     <li>
@@ -43,7 +43,7 @@
     <button type="submit">{{ product.title }} - Rs.{{ product.price }}</button>
   </form>
 
-  <!-- ✅ Admin-only Edit/Delete Buttons -->
+  <!-- Admin-only Edit/Delete Buttons -->
   {% if user.is_authenticated and user.is_staff %}
     <form action="{% url 'edit_product' product.id %}" method="get" style="display:inline;">
       <button type="submit">✏️ Edit</button>

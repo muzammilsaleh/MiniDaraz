@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<!-- ✅ Navbar Buttons -->
+
 <nav>
   <form action="{% url 'home' %}" method="get" style="display:inline;">
     <button type="submit">🏠 Home</button>
@@ -37,7 +37,7 @@
 
 <hr>
 
-<!-- 🛍️ Product List -->
+
 <h2>All Products</h2>
 <ul>
   {% for product in products %}

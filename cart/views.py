@@ -34,5 +34,3 @@ def update_quantity(request, item_id):
         item.quantity = new_qty
         item.save()
     return redirect('view_cart')
-
-
