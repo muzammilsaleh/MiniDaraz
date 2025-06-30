@@ -1,0 +1,14 @@
+.container {
+    max-width: 800px;
+}
+h2, h4 {
+    color: #1f4e5f;
+}
+.btn-primary {
+    background-color: teal;
+    border-color: teal;
+}
+.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+}

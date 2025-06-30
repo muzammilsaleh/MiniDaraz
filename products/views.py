@@ -40,36 +40,3 @@ def product_detail(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     return render(request, 'products/detail.html', {'product': product})
 
-def is_admin(user):
-    return user.is_authenticated and user.is_staff
-
-@user_passes_test(is_admin)
-def add_product(request):
-    if request.method == 'POST':
-        form = ProductForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('product_list')
-    else:
-        form = ProductForm()
-    return render(request, 'products/add_product.html', {'form': form})
-
-@user_passes_test(is_admin)
-def edit_product(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
-    if request.method == 'POST':
-        form = ProductForm(request.POST, request.FILES, instance=product)
-        if form.is_valid():
-            form.save()
-            return redirect('product_list')
-    else:
-        form = ProductForm(instance=product)
-    return render(request, 'products/edit_product.html', {'form': form, 'product': product})
-
-@user_passes_test(is_admin)
-def delete_product(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
-    if request.method == 'POST':
-        product.delete()
-        return redirect('product_list')
-    return render(request, 'products/confirm_delete.html', {'product': product})

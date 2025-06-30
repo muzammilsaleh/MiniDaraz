@@ -1,54 +1,55 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
 
-<nav>
-  <form action="{% url 'home' %}" method="get" style="display:inline;">
-    <button type="submit">🏠 Home</button>
-  </form>
+<div class="navbar">
+  <div class="logo">
+    <h2>MiniDaraz</h2>
+  </div>
 
-  <form action="{% url 'product_list' %}" method="get" style="display:inline;">
-    <button type="submit">📦 Products</button>
-  </form>
-
-  <form action="{% url 'view_cart' %}" method="get" style="display:inline;">
-    <button type="submit">🛒 Cart</button>
-  </form>
-
-  {% if user.is_authenticated %}
-    <form action="{% url 'user_orders' %}" method="get" style="display:inline;">
-      <button type="submit">🧾 Orders</button>
+  <div class="search-bar">
+    <form method="GET" action="{% url 'product_list' %}">
+      <input type="text" name="q" placeholder="Search for products..." />
+      <button type="submit">🔍</button>
     </form>
+  </div>
 
-    <form action="{% url 'profile' %}" method="get" style="display:inline;">
-      <button type="submit">👤 Profile</button>
-    </form>
+  <div class="nav-buttons">
+    <form method="get" action="{% url 'product_list' %}"><button>Products</button></form>
+    <form method="get" action="{% url 'view_cart' %}"><button>Cart</button></form>
+    
+    {% if user.is_authenticated %}
+      <form method="get" action="{% url 'user_orders' %}"><button>Orders</button></form>
+      <form method="get" action="{% url 'profile' %}"><button>Profile</button></form>
+      <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button>Logout</button></form>
+    {% else %}
+      <form method="get" action="{% url 'login' %}"><button>Login</button></form>
+    {% endif %}
+  </div>
+</div>
 
-    <form action="{% url 'logout' %}" method="post" style="display:inline;">
-      {% csrf_token %}
-      <button type="submit">🚪 Logout</button>
-    </form>
-  {% else %}
-    <form action="{% url 'login' %}" method="get" style="display:inline;">
-      <button type="submit">🔐 Login</button>
-    </form>
-  {% endif %}
-</nav>
-
-<hr>
-
-
-<h2>All Products</h2>
-<ul>
+<h2 class="section-title">Latest Products</h2>
+<div class="product-grid">
   {% for product in products %}
-    <li>
-      <img src="{{ product.image.url }}" alt="{{ product.name }}" width="200">
-      <form action="{% url 'product_detail' product.id %}" method="get" style="display:inline;">
-        <button type="submit">{{ product.title }} - Rs.{{ product.price }}</button>
+    <div class="product-card">
+      <img src="{{ product.image.url }}" alt="{{ product.title }}">
+      <a href="{% url 'product_detail' product.id %}"><h3>{{ product.title }}</h3></a>
+      <p>Rs. {{ product.price }}</p>
+
+      <form method="post" action="{% url 'add_to_cart' product.id %}" style="display: inline;">
+        {% csrf_token %}
+        <input type="hidden" name="quantity" value="1">
+        <button type="submit" class="teal-btn">Add to Cart</button>
       </form>
-    </li>
-  {% empty %}
-    <li>No products available.</li>
+
+      <form method="post" action="{% url 'buy_now' product.id %}">
+        {% csrf_token %}
+        <input type="hidden" name="quantity" value="1">
+        <button type="submit" class="teal-btn">Buy Now</button>
+      </form>
+    </div>
   {% endfor %}
-</ul>
+</div>
 {% endblock %}

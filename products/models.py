@@ -7,6 +7,8 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     stock = models.PositiveIntegerField()
     image = models.ImageField(upload_to='product_images/')
+    image2 = models.ImageField(upload_to='product_images/', blank=True, null=True)
+    image3 = models.ImageField(upload_to='product_images/', blank=True, null=True)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):

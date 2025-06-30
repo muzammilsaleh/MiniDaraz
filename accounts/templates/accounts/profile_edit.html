@@ -1,11 +1,22 @@
-<h2>Edit Your Profile</h2>
+{% extends 'base.html' %}
+{% load static %}
 
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Save Changes</button>
-</form>
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
 
-<form action="{% url 'profile' %}" method="get">
-  <button type="submit">Cancel</button>
-</form>
+<div class="edit-profile-container">
+  <h2>🛠️ Edit Your Profile</h2>
+
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-fields">
+      {{ form.as_p }}
+    </div>
+    <button type="submit" class="teal-button">💾 Save Changes</button>
+  </form>
+
+  <form action="{% url 'profile' %}" method="get">
+    <button type="submit" class="cancel-button">❌ Cancel</button>
+  </form>
+</div>
+{% endblock %}

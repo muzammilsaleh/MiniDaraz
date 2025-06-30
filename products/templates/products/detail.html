@@ -1,15 +1,110 @@
-<h2>{{ product.title }}</h2>
-<p>Price: Rs.{{ product.price }}</p>
-<p>{{ product.description }}</p>
-<img src="{{ product.image.url }}" alt="{{ product.name }}" width="200">
+{% extends 'base.html' %}
 
-<form action="{% url 'add_to_cart' product.id %}" method="post">
-  {% csrf_token %}
-  <button type="submit">🛒 Add to Cart</button>
-</form>
+{% block content %}
+<style>
+  .product-detail-container {
+    display: flex;
+    gap: 40px;
+    padding: 40px;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 128, 128, 0.1);
+  }
 
-<form action="{% url 'product_list' %}" method="get">
-  <button type="submit">← Back to Products</button>
-</form>
+  .image-gallery {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
 
-<img>
+  .image-gallery img {
+    width: 300px;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid #eee;
+  }
+
+  .product-info {
+    flex: 2;
+  }
+
+  .product-info h2 {
+    font-size: 28px;
+    margin-bottom: 10px;
+    color: #333;
+  }
+
+  .product-info p {
+    margin: 10px 0;
+    font-size: 16px;
+    color: #444;
+  }
+
+  .product-info .price {
+    font-size: 22px;
+    font-weight: bold;
+    color: teal;
+  }
+
+  .product-info .stock {
+    font-size: 16px;
+    color: #009688;
+  }
+
+  .action-buttons {
+    margin-top: 25px;
+  }
+
+  .action-buttons form {
+    display: inline-block;
+    margin-right: 15px;
+  }
+
+  .action-buttons button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: teal;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+
+  .action-buttons button:hover {
+    background-color: #007777;
+  }
+</style>
+
+<div class="product-detail-container">
+  <div class="image-gallery">
+    <img src="{{ product.image.url }}" alt="{{ product.title }}">
+    {% if product.image2 %}
+      <img src="{{ product.image2.url }}" alt="{{ product.title }}">
+    {% endif %}
+    {% if product.image3 %}
+      <img src="{{ product.image3.url }}" alt="{{ product.title }}">
+    {% endif %}
+  </div>
+
+  <div class="product-info">
+    <h2>{{ product.title }}</h2>
+    <p class="price">Rs. {{ product.price }}</p>
+    <p>{{ product.description }}</p>
+    <p class="stock">Available Stock: {{ product.stock }}</p>
+
+    <div class="action-buttons">
+      <form method="post" action="{% url 'add_to_cart' product.id %}">
+        {% csrf_token %}
+        <label>Quantity:</label>
+        <input type="number" name="quantity" value="1" min="1">
+        <button type="submit">Add to Cart</button>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,41 +1,70 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import Order, OrderItem
+from django.contrib import messages
+from .models import Address, Order, OrderItem
+from .forms import AddressForm
 from cart.models import Cart
-from products.models import Product
 
 @login_required
-def confirm_order_view(request):
-    cart = Cart.objects.get(user=request.user)
-    cart_items = cart.items.all()
-    total_amount = sum(item.product.price * item.quantity for item in cart_items)
-
-    return render(request, 'orders/confirm_order.html', {
-        'cart_items': cart_items,
-        'total_amount': total_amount,
-    })
-
-@login_required
-def place_order(request):
+def add_address(request):
     if request.method == 'POST':
-        cart = Cart.objects.get(user=request.user)
-        cart_items = cart.items.all()
-        total_amount = sum(item.product.price * item.quantity for item in cart_items)
+        form = AddressForm(request.POST)
+        if form.is_valid():
+            address = form.save(commit=False)
+            address.user = request.user
+            address.save()
+            return redirect('checkout')  
+    else:
+        form = AddressForm()
+    return render(request, 'orders/add_address.html', {'form': form})
 
-        order = Order.objects.create(user=request.user, total_amount=total_amount)
+@login_required
+def checkout(request):
+    cart = get_object_or_404(Cart, user=request.user)
+    cart_items = cart.items.select_related('product')
+    addresses = Address.objects.filter(user=request.user)
+    total = cart.get_total()
 
-        for item in cart_items:
-            OrderItem.objects.create(
-                order=order,
-                product=item.product,
-                quantity=item.quantity,
-                price=item.product.price
-            )
+    address_form = AddressForm()
 
-        cart.items.all().delete()
+    if request.method == 'POST':
+        # check if new address form is submitted
+        if 'full_name' in request.POST:
+            address_form = AddressForm(request.POST)
+            if address_form.is_valid():
+                new_address = address_form.save(commit=False)
+                new_address.user = request.user
+                new_address.save()
+                messages.success(request, "New address added.")
+                return redirect('checkout')
 
-        return redirect('order_detail', order_id=order.id)
-    return redirect('cart_view')
+        else:
+            address_id = request.POST.get('address')
+            try:
+                address = Address.objects.get(id=address_id, user=request.user)
+            except Address.DoesNotExist:
+                messages.error(request, "Please select a valid address.")
+                return redirect('checkout')
+
+            # Place order
+            order = Order.objects.create(user=request.user, total_amount=total)
+            for item in cart_items:
+                OrderItem.objects.create(
+                    order=order,
+                    product=item.product,
+                    quantity=item.quantity,
+                    price=item.product.price
+                )
+            cart.items.all().delete()
+            messages.success(request, "Your order has been placed successfully!")
+            return redirect('user_orders')
+
+    return render(request, 'orders/checkout.html', {
+        'cart_items': cart_items,
+        'addresses': addresses,
+        'total': total,
+        'address_form': address_form
+    })
 
 @login_required
 def order_list(request):
@@ -46,8 +75,3 @@ def order_list(request):
 def order_detail(request, order_id):
     order = get_object_or_404(Order, id=order_id, user=request.user)
     return render(request, 'orders/order_detail.html', {'order': order})
-@login_required
-def user_orders(request):
-    orders = Order.objects.filter(user=request.user).order_by('-created_at')
-    return render(request, 'orders/user_orders.html', {'orders': orders})
-

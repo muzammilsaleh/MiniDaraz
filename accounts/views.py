@@ -1,31 +1,39 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from .forms import CustomUserChangeForm 
-from .forms import CustomUserCreationForm
+from django.contrib.auth.forms import UserCreationForm 
+from django.contrib import messages
+from .forms import CustomSignupForm
 
 def signup_view(request):
     if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
+        form = CustomSignupForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return redirect('product_list') 
+            form.save()
+            messages.success(request, 'Registered successfully! Please login.')
+            return redirect('login') 
     else:
-        form = CustomUserCreationForm()
+        form = CustomSignupForm()
     return render(request, 'accounts/signup.html', {'form': form})
+
 
 def login_view(request):
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            return redirect('home') 
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        if username and password:
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('home')
+            else:
+                return render(request, 'accounts/login.html', {'error': 'Invalid credentials'})
         else:
-            return render(request, 'accounts/login.html', {'error': 'Invalid credentials'})
+            return render(request, 'accounts/login.html', {'error': 'Username and password required'})
+    
     return render(request, 'accounts/login.html')
+
 
 def logout_view(request):
     logout(request)
