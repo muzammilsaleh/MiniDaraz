@@ -1,62 +1,79 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
 
-<!--  Admin-only Add Product Button -->
-{% if user.is_authenticated and user.is_staff %}
-  <form action="{% url 'add_product' %}" method="get">
-    <button type="submit">➕ Add Product</button>
-  </form>
-{% endif %}
+<div class="main-container">
 
-<h2>All Products</h2>
+  <div class="sidebar">
+    <h3>Categories</h3>
+    <ul class="category-list">
+      {% for category in categories %}
+        <li>
+          <form method="get" action="{% url 'product_list' %}">
+            <input type="hidden" name="category" value="{{ category.id }}">
+            <button type="submit">{{ category.name }}</button>
+          </form>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
 
-<!-- Search Form -->
-<form method="get">
-  <input type="text" name="q" placeholder="Search by title" value="{{ request.GET.q }}">
-  <button type="submit">🔍 Search</button>
-</form>
+  <div class="content-area">
+    <div class="navbar">
+      <div class="logo">
+        <h2>MiniDaraz</h2>
+      </div>
 
-<!-- 💸 Price Filter -->
-<form method="get">
-  <input type="hidden" name="q" value="{{ request.GET.q }}">
-  <input type="number" name="min_price" placeholder="Min Price" value="{{ request.GET.min_price }}">
-  <input type="number" name="max_price" placeholder="Max Price" value="{{ request.GET.max_price }}">
-  <button type="submit">💰 Filter</button>
-</form>
+      <div class="nav-buttons">
+        <form method="get" action="{% url 'home' %}"><button>Home</button></form>
+        <form method="get" action="{% url 'view_cart' %}"><button>Cart</button></form>
 
-<!--  Category Filter Buttons -->
-<h4>Filter by Category:</h4>
-<form method="get">
-  {% for cat in categories %}
-    <button type="submit" name="category" value="{{ cat.id }}">{{ cat.name }}</button>
-  {% endfor %}
-</form>
+        {% if user.is_authenticated %}
+          <form method="get" action="{% url 'user_orders' %}"><button>Orders</button></form>
+          <form method="get" action="{% url 'profile' %}"><button>Profile</button></form>
+          <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button>Logout</button></form>
+        {% else %}
+          <form method="get" action="{% url 'login' %}"><button>Login</button></form>
+        {% endif %}
+      </div>
+    </div>
 
-<hr>
+    <div class="filters">
+      <form method="get" action="{% url 'product_list' %}">
+        <input type="text" name="q" placeholder="Search by title" value="{{ request.GET.q }}">
+        <input type="number" name="min_price" placeholder="Min Price" value="{{ request.GET.min_price }}">
+        <input type="number" name="max_price" placeholder="Max Price" value="{{ request.GET.max_price }}">
+        <button type="submit">Filter</button>
+      </form>
+    </div>
 
-<!--  Product List -->
-<ul>
+    <h2 class="section-title">Latest Products</h2>
+    <div class="product-grid">
   {% for product in products %}
-    <li>
-  <form action="{% url 'product_detail' product.id %}" method="get" style="display:inline;">
-    <button type="submit">{{ product.title }} - Rs.{{ product.price }}</button>
-  </form>
+    <div class="product-card">
+      <img src="{{ product.image.url }}" alt="{{ product.title }}">
+      <a href="{% url 'product_detail' product.id %}"><h3>{{ product.title }}</h3></a>
+      <p>Rs. {{ product.price }}</p>
 
-  <!-- Admin-only Edit/Delete Buttons -->
-  {% if user.is_authenticated and user.is_staff %}
-    <form action="{% url 'edit_product' product.id %}" method="get" style="display:inline;">
-      <button type="submit">✏️ Edit</button>
-    </form>
-    <form action="{% url 'delete_product' product.id %}" method="get" style="display:inline;">
-      <button type="submit">🗑️ Delete</button>
-    </form>
-  {% endif %}
-</li>
+      <form method="post" action="{% url 'add_to_cart' product.id %}" style="display: inline;">
+        {% csrf_token %}
+        <input type="hidden" name="quantity" value="1">
+        <button type="submit" class="teal-btn">Add to Cart</button>
+      </form>
 
-  {% empty %}
-    <li>No products found.</li> 
+      <form method="post" action="{% url 'buy_now' product.id %}">
+        {% csrf_token %}
+        <input type="hidden" name="quantity" value="1">
+        <button type="submit" class="teal-btn">Buy Now</button>
+      </form>
+    </div>
   {% endfor %}
-</ul>
+</div>
+
+  </div> 
+
+</div>
 
 {% endblock %}

@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/checkout.css' %}">
+
+<div class="checkout-container">
+  <h2>Checkout - Select Delivery Address</h2>
+
+  <form method="post">
+    {% csrf_token %}
+
+    <div class="address-list">
+      <h3>Saved Addresses</h3>
+      {% if addresses %}
+        {% for addr in addresses %}
+          <label class="address-item">
+            <input type="radio" name="address" value="{{ addr.id }}" {% if forloop.first %}checked{% endif %}>
+            <strong>{{ addr.full_name }}</strong><br>
+            {{ addr.phone }}<br>
+            {{ addr.email }}<br>
+            {{ addr.address }}
+          </label>
+        {% endfor %}
+      {% else %}
+        <p>No saved addresses.</p>
+      {% endif %}
+    </div>
+
+    <div class="cart-summary">
+      <h3>🧾 Order Summary</h3>
+      <ul>
+        {% for item in cart_items %}
+          <li style="margin-bottom: 10px;">
+            <img src="{{ item.product.image.url }}" style="width: 60px; height: 60px; object-fit: cover; margin-right: 10px;">
+            {{ item.product.title }} x {{ item.quantity }} = <strong>Rs. {{ item.get_total_price|floatformat:0 }}</strong>
+          </li>
+        {% endfor %}
+      </ul>
+      <p class="total-price"><strong>Grand Total: Rs. {{ total|floatformat:0 }}</strong></p>
+    </div>
+
+    <div class="place-order-section">
+      <button type="submit" class="place-order-btn">Place Order</button>
+    </div>
+  </form>
+
+  <hr>
+
+  <div class="add-address-form">
+    <h3>Add New Address</h3>
+    <form method="post">
+      {% csrf_token %}
+      {{ address_form.as_p }}
+      <button type="submit" class="add-btn">Add Address</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

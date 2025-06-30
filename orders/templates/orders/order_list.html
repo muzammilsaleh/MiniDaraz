@@ -1,12 +1,31 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/order_list.css' %}">
+
 <h2>My Orders</h2>
-<ul>
+
+{% if orders %}
   {% for order in orders %}
-    <li>
-      <form method="get" action="{% url 'order_detail' order.id %}">
-        <button type="submit">Order #{{ order.id }} - Rs.{{ order.total_amount }} - {{ order.status }}</button>
-      </form>
-    </li>
-  {% empty %}
-    <li>No orders found.</li>
+    <div class="order-block">
+      <h4>Order #{{ order.id }} | Rs. {{ order.total_amount }} | {{ order.created_at|date:"d M Y, H:i" }}</h4>
+
+      {% for item in order.items.all %}
+        <div class="order-item">
+          <img src="{{ item.product.image.url }}" alt="{{ item.product.title }}">
+          <div>
+            <strong>{{ item.product.title }}</strong><br>
+            Rs. {{ item.price|floatformat:0 }} × {{ item.quantity }} = <strong>Rs. {{ item.get_total_price|floatformat:0 }}</strong>
+          </div>
+        </div>
+      {% endfor %}
+
+      <p>Status: {{ order.status|title }}</p>
+    </div>
   {% endfor %}
-</ul>
+{% else %}
+  <p style="text-align:center; color: gray;">You have no orders yet.</p>
+{% endif %}
+
+{% endblock %}

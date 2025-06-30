@@ -1,0 +1,28 @@
+.checkout-container {
+  width: 80%;
+  margin: auto;
+  padding: 20px;
+}
+
+.address-item {
+  display: block;
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: #f9f9f9;
+}
+
+.place-order-btn,
+.add-btn {
+  background-color: teal;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+.place-order-btn:hover,
+.add-btn:hover {
+  background-color: #006666;
+}

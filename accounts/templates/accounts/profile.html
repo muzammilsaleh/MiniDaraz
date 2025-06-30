@@ -1,9 +1,67 @@
-<h2>Welcome, {{ user.username }}</h2>
+{% extends 'base.html' %}
+{% load static %}
 
-<p>Email: {{ user.email }}</p>
-<p>Phone: {{ user.phone_number }}</p>
-<p>Address: {{ user.address }}</p>
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
 
-<form action="{% url 'edit_profile' %}" method="get">
-  <button type="submit">Edit Profile</button>
-</form>
+<div class="container mt-5 mb-5">
+    <div class="card shadow p-4">
+        <h2 class="text-center mb-4">👤 My Profile</h2>
+
+        <form method="POST">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label><strong>First Name:</strong></label>
+                    <input type="text" name="first_name" class="form-control" value="{{ user.first_name }}">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label><strong>Last Name:</strong></label>
+                    <input type="text" name="last_name" class="form-control" value="{{ user.last_name }}">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label><strong>Phone:</strong></label>
+                    <input type="text" name="phone" class="form-control" value="{{ user.profile.phone }}">
+                </div>
+            </div>
+            <button class="btn btn-primary">Update Profile</button>
+            <a href="{% url 'password_change' %}" class="btn btn-link">Change Password</a>
+        </form>
+
+        <hr>
+
+        <h4 class="mt-4">🏠 Add Address</h4>
+        <form method="POST" action="{% url 'add_address' %}">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <input type="text" name="street" class="form-control" placeholder="Street" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <input type="text" name="city" class="form-control" placeholder="City" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <input type="text" name="zip_code" class="form-control" placeholder="Zip code" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <input type="text" name="country" class="form-control" placeholder="Country" required>
+                </div>
+            </div>
+            <button class="btn btn-success">Add Address</button>
+        </form>
+
+        <hr>
+
+        <h4 class="mt-4">📍 Saved Addresses</h4>
+        <ul class="list-group">
+            {% for addr in addresses %}
+                <li class="list-group-item">
+                    {{ addr.street }}, {{ addr.city }}, {{ addr.zip_code }}, {{ addr.country }}
+                </li>
+            {% empty %}
+                <li class="list-group-item">No addresses saved.</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,97 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+  background-color: #e0f7f5; /* Light teal background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.signup-container {
+  width: 100%;
+  max-width: 450px;
+  background-color: #2aafa0; /* Teal box */
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+  color: white;
+  text-align: center;
+}
+
+.logo {
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: white;
+}
+
+h2 {
+  margin-bottom: 20px;
+  font-size: 26px;
+}
+
+form {
+  text-align: left;
+}
+
+form label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+form input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.signup-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: #00796b;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.signup-btn:hover {
+  background-color: #004d40;
+}
+
+.login-link {
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+.login-link a {
+  color: #ffffff;
+  font-weight: bold;
+  text-decoration: underline;
+}
+.messages {
+  margin-bottom: 20px;
+}
+
+.alert {
+  padding: 10px 15px;
+  border-radius: 5px;
+  background-color: #c8e6c9;
+  color: #2e7d32;
+  font-weight: bold;
+  text-align: center;
+}
+
